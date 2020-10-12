@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="algs4">
+    <CLASSES>
+      <root url="jar:///usr/local/lift/lib/algs4.jar!/" />
+      <root url="jar:///usr/local/lift/lib/stdlib.jar!/" />
+      <root url="jar:///usr/local/lift/lib/introcs.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar:///usr/local/lift/lib/algs4.jar!/" />
+      <root url="jar:///usr/local/lift/lib/stdlib.jar!/" />
+      <root url="jar:///usr/local/lift/lib/introcs.jar!/" />
+    </SOURCES>
+  </library>
+</component>

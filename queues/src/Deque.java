@@ -4,11 +4,13 @@ import java.util.NoSuchElementException;
 public class Deque<Item> implements Iterable<Item> {
     private Node first;
     private Node last;
+    private int itemCount;
 
     // construct an empty deque
     public Deque() {
         first = null;
         last = null;
+        itemCount = 0;
     }
 
     private class Node {
@@ -19,26 +21,27 @@ public class Deque<Item> implements Iterable<Item> {
 
     // is the deque empty?
     public boolean isEmpty() {
-        return first == null;
+        return itemCount == 0;
     }
 
     // return the number of items on the deque
     public int size() {
-        if (isEmpty()) {
-            return 0;
-        }
-        else if (first == last) {
-            return 1;
-        }
-        else {
-            int count = 2;
-            Node node = first;
-            while (node.next.next != null) {
-                node = node.next;
-                count++;
-            }
-            return count;
-        }
+//        if (isEmpty()) {
+//            return 0;
+//        }
+//        else if (first == last) {
+//            return 1;
+//        }
+//        else {
+//            int count = 2;
+//            Node node = first;
+//            while (node.next.next != null) {
+//                node = node.next;
+//                count++;
+//            }
+//            return count;
+//        }
+        return itemCount;
     }
 
     // add the item to the front
@@ -56,6 +59,7 @@ public class Deque<Item> implements Iterable<Item> {
             first.next = oldFirst;
             oldFirst.prev = first;
         }
+        itemCount++;
     }
 
     // add the item to the back
@@ -73,6 +77,7 @@ public class Deque<Item> implements Iterable<Item> {
             last.prev = oldLast;
             oldLast.next = last;
         }
+        itemCount++;
     }
 
     // remove and return the item from the front
@@ -80,29 +85,35 @@ public class Deque<Item> implements Iterable<Item> {
         if (isEmpty()) throw new NoSuchElementException();
         if (size() == 1) {
             Item item = first.item;
+            itemCount--;
             first = null;
             last = null;
             return item;
         }
         else {
             Item item = first.item;
+            itemCount--;
             first = first.next;
             first.prev = null;
             return item;
         }
+
     }
 
     // remove and return the item from the back
     public Item removeLast() {
         if (isEmpty()) throw new NoSuchElementException();
+
         if (size() == 1) {
             Item item = first.item;
+            itemCount--;
             first = null;
             last = null;
             return item;
         }
         else {
             Item item = last.item;
+            itemCount--;
             last = last.prev;
             last.next = null;
             return item;
@@ -115,30 +126,19 @@ public class Deque<Item> implements Iterable<Item> {
     }
 
     private class DequeIterator implements Iterator<Item> {
-        Node node = null;
+        Node node = first;
 
         @Override
         public boolean hasNext() {
-            if (isEmpty()) {
-                return false;
-            }
-            else if (node == null) {
-                node = first;
-                return true;
-            }
-            else if (node.next != null) {
-                node = node.next;
-                return true;
-            }
-            else {
-                return false;
-            }
+            return node != null;
         }
 
         @Override
         public Item next() {
-            if (node.item == null) throw new NoSuchElementException();
-            return node.item;
+            if (node == null) throw new NoSuchElementException();
+            Item item = node.item;
+            node = node.next;
+            return item;
         }
 
         @Override
@@ -170,5 +170,6 @@ public class Deque<Item> implements Iterable<Item> {
 //        System.out.println("Iterator:");
 //        while (iterator.hasNext())
 //            System.out.println(iterator.next());
+//        System.out.println(iterator.next());
     }
 }
