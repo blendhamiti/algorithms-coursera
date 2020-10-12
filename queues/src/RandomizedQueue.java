@@ -21,7 +21,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // is the randomized queue empty?
     public boolean isEmpty() {
-        return false;
+        return size == 0;
     }
 
     // return the number of items on the randomized queue
@@ -75,8 +75,8 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
         @Override
         public Item next() {
+            if (!(i < size)) throw new NoSuchElementException();
             Item item = queue[indices[i++]];
-            if (item == null) throw new NoSuchElementException();
             return item;
         }
 
