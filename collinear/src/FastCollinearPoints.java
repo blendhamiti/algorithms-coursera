@@ -4,9 +4,13 @@ public class FastCollinearPoints {
     public FastCollinearPoints(Point[] points) {}
 
     // the number of line segments
-    public int numberOfSegments() {}
+    public int numberOfSegments() {
+        return 0;
+    }
 
     // the line segments
-    public LineSegment[] segments() {}
+    public LineSegment[] segments() {
+        return null;
+    }
 
 }

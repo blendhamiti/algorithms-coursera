@@ -8,6 +8,9 @@
  *
  ******************************************************************************/
 
+import java.awt.*;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Comparator;
 import edu.princeton.cs.algs4.StdDraw;
 
@@ -59,7 +62,10 @@ public class Point implements Comparable<Point> {
      * @return the slope between this point and the specified point
      */
     public double slopeTo(Point that) {
-        /* YOUR CODE HERE */
+        if (this.x == that.x && this.y == that.y) return Double.NEGATIVE_INFINITY;
+        if (this.x == that.x) return Double.POSITIVE_INFINITY;
+        if (this.y == that.y) return +0.0;
+        return ((double) (that.y - this.y) / (double) (that.x - this.x));
     }
 
     /**
@@ -75,7 +81,9 @@ public class Point implements Comparable<Point> {
      *         argument point
      */
     public int compareTo(Point that) {
-        /* YOUR CODE HERE */
+        if (this.y < that.y || (this.y == that.y && this.x < that.x)) return -1;
+        if (this.x == that.x && this.y == that.y) return 0;
+        return 1;
     }
 
     /**
@@ -85,9 +93,21 @@ public class Point implements Comparable<Point> {
      * @return the Comparator that defines this ordering on points
      */
     public Comparator<Point> slopeOrder() {
-        /* YOUR CODE HERE */
+        return new BySlope(this);
     }
 
+    private static class BySlope implements Comparator<Point> {
+        Point point;
+
+        public BySlope(Point point) {
+            this.point = point;
+        }
+
+        @Override
+        public int compare(Point v, Point w) {
+            return Double.compare(point.slopeTo(v), point.slopeTo(w));
+        }
+    }
 
     /**
      * Returns a string representation of this point.
@@ -105,7 +125,39 @@ public class Point implements Comparable<Point> {
      * Unit tests the Point data type.
      */
     public static void main(String[] args) {
-        /* YOUR CODE HERE */
+        Point[] points = new Point[6];
+        Point p0 = new Point(0, 0);
+        Point p1 = new Point(1, 2);
+        Point p2 = new Point(1, 2);
+        Point p3 = new Point(1, 4);
+        Point p4 = new Point(3, 2);
+        Point p5 = new Point(6, 6);
+        points[0] = p5;
+        points[1] = p4;
+        points[2] = p3;
+        points[3] = p2;
+        points[4] = p1;
+        points[5] = p0;
+
+        System.out.println("before sort");
+        for (Point point : points) System.out.println(point);
+        Arrays.sort(points, p3.slopeOrder());
+        System.out.println("after sort");
+        for (Point point : points) System.out.println(point);
+
+        LineSegment line1 = new LineSegment(p1, p5);
+        LineSegment line2 = new LineSegment(p1, p4);
+
+        // draw the points
+        StdDraw.enableDoubleBuffering();
+        StdDraw.setPenColor(Color.black);
+        StdDraw.setPenRadius(0.02);
+        StdDraw.setXscale(-1, 7);
+        StdDraw.setYscale(-1, 7);
+        for (Point p : points) p.draw();
+        line1.draw();
+        line2.draw();
+        StdDraw.show();
     }
 
 }
