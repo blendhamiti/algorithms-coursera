@@ -1,10 +1,5 @@
 import edu.princeton.cs.algs4.StdDraw;
-import edu.princeton.cs.algs4.Stopwatch;
-
-import java.awt.*;
-import java.lang.reflect.Array;
 import java.util.Arrays;
-import java.util.Comparator;
 
 public class BruteCollinearPoints {
     private LineSegment[] segments;
