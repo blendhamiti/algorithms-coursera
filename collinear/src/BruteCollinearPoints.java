@@ -65,6 +65,8 @@ public class BruteCollinearPoints {
     }
 
     public static void main(String[] args) {
+
+        // read the n points from a file
         In in = new In(args[0]);
         int n = in.readInt();
         Point[] points = new Point[n];
@@ -74,22 +76,21 @@ public class BruteCollinearPoints {
             points[i] = new Point(x, y);
         }
 
-        Stopwatch stopwatch = new Stopwatch();
-        BruteCollinearPoints collinearPoints = new BruteCollinearPoints(points);
-        System.out.println(stopwatch.elapsedTime());
-        for (LineSegment l: collinearPoints.segments())
-            if (l != null) System.out.println(l.toString());
-
+        // draw the points
         StdDraw.enableDoubleBuffering();
-        StdDraw.setPenColor(Color.black);
-        StdDraw.setPenRadius(0.02);
-        StdDraw.setXscale(-1000, 33767);
-        StdDraw.setYscale(-1000, 33767);
-        for (Point p : points) p.draw();
-        StdDraw.setPenColor(Color.red);
-        StdDraw.setPenRadius(0.01);
-        for (LineSegment l: collinearPoints.segments())
-            if (l != null) l.draw();
+        StdDraw.setXscale(0, 32768);
+        StdDraw.setYscale(0, 32768);
+        for (Point p : points) {
+            p.draw();
+        }
+        StdDraw.show();
+
+        // print and draw the line segments
+        FastCollinearPoints collinear = new FastCollinearPoints(points);
+        for (LineSegment segment : collinear.segments()) {
+            StdOut.println(segment);
+            segment.draw();
+        }
         StdDraw.show();
     }
 }

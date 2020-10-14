@@ -120,39 +120,39 @@ public class Point implements Comparable<Point> {
      * Unit tests the Point data type.
      */
     public static void main(String[] args) {
-        Point[] points = new Point[6];
-        Point p0 = new Point(0, 0);
-        Point p1 = new Point(1, 2);
-        Point p2 = new Point(1, 2);
-        Point p3 = new Point(1, 4);
-        Point p4 = new Point(3, 2);
-        Point p5 = new Point(6, 6);
-        points[0] = p5;
-        points[1] = p4;
-        points[2] = p3;
-        points[3] = p2;
-        points[4] = p1;
-        points[5] = p0;
-
-        System.out.println("before sort");
-        for (Point point : points) System.out.println(point);
-        Arrays.sort(points, p3.slopeOrder());
-        System.out.println("after sort");
-        for (Point point : points) System.out.println(point);
-
-        LineSegment line1 = new LineSegment(p1, p5);
-        LineSegment line2 = new LineSegment(p1, p4);
-
-        // draw the points
-        StdDraw.enableDoubleBuffering();
-        StdDraw.setPenColor(Color.black);
-        StdDraw.setPenRadius(0.02);
-        StdDraw.setXscale(-1, 7);
-        StdDraw.setYscale(-1, 7);
-        for (Point p : points) p.draw();
-        line1.draw();
-        line2.draw();
-        StdDraw.show();
+//        Point[] points = new Point[6];
+//        Point p0 = new Point(0, 0);
+//        Point p1 = new Point(1, 2);
+//        Point p2 = new Point(1, 2);
+//        Point p3 = new Point(1, 4);
+//        Point p4 = new Point(3, 2);
+//        Point p5 = new Point(6, 6);
+//        points[0] = p5;
+//        points[1] = p4;
+//        points[2] = p3;
+//        points[3] = p2;
+//        points[4] = p1;
+//        points[5] = p0;
+//
+//        System.out.println("before sort");
+//        for (Point point : points) System.out.println(point);
+//        Arrays.sort(points, p3.slopeOrder());
+//        System.out.println("after sort");
+//        for (Point point : points) System.out.println(point);
+//
+//        LineSegment line1 = new LineSegment(p1, p5);
+//        LineSegment line2 = new LineSegment(p1, p4);
+//
+//        // draw the points
+//        StdDraw.enableDoubleBuffering();
+//        StdDraw.setPenColor(Color.black);
+//        StdDraw.setPenRadius(0.02);
+//        StdDraw.setXscale(-1, 7);
+//        StdDraw.setYscale(-1, 7);
+//        for (Point p : points) p.draw();
+//        line1.draw();
+//        line2.draw();
+//        StdDraw.show();
     }
 
 }
