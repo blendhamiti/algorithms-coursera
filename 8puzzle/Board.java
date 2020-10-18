@@ -152,12 +152,12 @@ public class Board {
     public Board twin() {
         Board board = new Board(tiles);
         int i = 0, j = 0;
-        int a = n, b = n;
-        while (i == blankRow || j == blankCol) {
+        int a = n - 1, b = n - 1;
+        if (i == blankRow && j == blankCol) {
             i = getNextTile(i, j)[0];
             j = getNextTile(i, j)[1];
         }
-        while (a == blankRow || b == blankCol) {
+        if (a == blankRow && b == blankCol) {
             a = getPrevTile(a, b)[0];
             b = getPrevTile(a, b)[1];
         }
@@ -167,15 +167,25 @@ public class Board {
 
     private int[] getNextTile(int row, int col) {
         int[] res = {row, col};
-        if (col < n - 1) res[1]++;
-        else res[0]++; res[1] = 0;
+        if (col < n - 1) {
+            res[1]++;
+        }
+        else {
+            res[0]++;
+            res[1] = 0;
+        }
         return res;
     }
 
     private int[] getPrevTile(int row, int col) {
         int[] res = {row, col};
-        if (col > 0) res[1]--;
-        else res[0]--; res[1] = 0;
+        if (col > 0) {
+            res[1]--;
+        }
+        else {
+            res[0]--;
+            res[1] = n - 1;
+        }
         return res;
     }
 
@@ -189,9 +199,10 @@ public class Board {
     public static void main(String[] args) {
         int[][] tiles = {{0, 2, 8}, {4, 5, 6}, {7, 3, 1}};
         Board board = new Board(tiles);
-        System.out.println(board.toString());
+        System.out.println(board);
         System.out.println("hamming: " + board.hamming());
         System.out.println("manhattan: " + board.manhattan());
         System.out.println(board.neighbors());
+        System.out.println(board.twin());
     }
 }

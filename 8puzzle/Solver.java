@@ -4,6 +4,8 @@
  *  Description: Solver
  **************************************************************************** */
 
+import edu.princeton.cs.algs4.MinPQ;
+
 public class Solver {
     private Board board;
 
@@ -12,14 +14,13 @@ public class Solver {
         // TODO: immutable data type
         if (initial == null) throw new IllegalArgumentException();
         board = initial;
-
+        MinPQ pq = new MinPQ();
 
     }
 
     // is the initial board solvable? (see below)
     public boolean isSolvable() {
-        // TODO
-        return false;
+        return (this.moves() >= 0);
     }
 
     // min number of moves to solve initial board; -1 if unsolvable
