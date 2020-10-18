@@ -10,15 +10,15 @@ public class FastCollinearPoints {
 
     // finds all line segments containing 4 or more points
     public FastCollinearPoints(Point[] points) {
+        this.points = points;
         if (points == null) throw new IllegalArgumentException();
 
-        this.points = points;
         segments = new LineSegment[0];
 
         Point[] pointsOriginal = new Point[points.length];
         for (int i = 0; i < points.length; i++) {
-            if (points[i] == null) throw new IllegalArgumentException();
             for (int j = 0; j < points.length; j++) {
+                if (i == 0 && points[j] == null) throw new IllegalArgumentException();
                 if (i != j && points[i].compareTo(points[j]) == 0) throw new IllegalArgumentException();
             }
             pointsOriginal[i] = points[i];
@@ -67,8 +67,10 @@ public class FastCollinearPoints {
                 else {
 
                     // segment can continue && continues on
-                    if (points[getArrayIndex(-1)].slopeTo(points[getArrayIndex(0)])
-                            == points[getArrayIndex(0)].slopeTo(points[getArrayIndex(1)])) {
+                    // do not start from beginning if all points are inlcuded in one line
+                    if ((points[getArrayIndex(-1)].slopeTo(points[getArrayIndex(0)])
+                            == points[getArrayIndex(0)].slopeTo(points[getArrayIndex(1)]))
+                            && !(startPoint == 1 && endPoint == points.length - 1)) {
                         endPoint = setArrayIndex(1);
 
                         // start from beginning to see if segment continues on -> hold iteration counter
@@ -99,8 +101,6 @@ public class FastCollinearPoints {
                             // add line segment if the first point of the line is the same as the first point in the sorted array
                             if (lineSegmentPoints[0] == p) {
                                 addSegment(new LineSegment(lineSegmentPoints[0], lineSegmentPoints[getDiff(endPoint, startPoint)]));
-//                                segments[lineSegmentsIndex++] = new LineSegment(lineSegmentPoints[0], lineSegmentPoints[getDiff(endPoint, startPoint)]);
-//                                segCount++;
                             }
 
                             // return the old value of arrayIndex
@@ -108,7 +108,7 @@ public class FastCollinearPoints {
                         }
                         startPoint = getArrayIndex(0);
                         endPoint = getArrayIndex(0);
-                        iterationCount++;
+                        // iterationCount++;
                     }
                 }
             }
@@ -144,7 +144,7 @@ public class FastCollinearPoints {
     }
 
     private int getDiff(int a, int b) {
-        if (a < b) return - (a - b + 1);
+        if (a < b) return (points.length - b + a);
         else if (a == b) return points.length;
         else return (a - b + 1);
     }
@@ -165,7 +165,7 @@ public class FastCollinearPoints {
 
     // the line segments
     public LineSegment[] segments() {
-        return segments;
+        return segments.clone();
     }
 
     public static void main(String[] args) {
