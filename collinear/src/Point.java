@@ -13,7 +13,7 @@ import edu.princeton.cs.algs4.StdOut;
 import java.util.Comparator;
 import edu.princeton.cs.algs4.StdDraw;
 
-public class Point implements Comparable<Point> {
+public final class Point implements Comparable<Point> {
 
     private final int x;     // x-coordinate of this point
     private final int y;     // y-coordinate of this point
