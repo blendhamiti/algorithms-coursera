@@ -47,6 +47,9 @@ public class Board {
             }
             board.append("\n");
         }
+        board.append("hamming: " + this.hamming() + "\n");
+        board.append("manhattan: " + this.manhattan() + "\n");
+
         return board.toString();
     }
 
@@ -84,14 +87,7 @@ public class Board {
 
     // is this board the goal board?
     public boolean isGoal() {
-        if (blankRow != (n - 1) && blankCol != (n - 1)) return false;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (i != (n - 1) && j != (n - 1)
-                        && tiles[i][j] != i * n + j + 1) return false;
-            }
-        }
-        return true;
+        return (this.hamming() == 0);
     }
 
     // does this board equal y?
@@ -151,15 +147,17 @@ public class Board {
     // a board that is obtained by exchanging any pair of tiles
     public Board twin() {
         Board board = new Board(tiles);
-        int i = 0, j = 0;
-        int a = n - 1, b = n - 1;
+        int i = 0;
+        int j = 0;
         if (i == blankRow && j == blankCol) {
             i = getNextTile(i, j)[0];
             j = getNextTile(i, j)[1];
         }
+        int a = getNextTile(i, j)[0];
+        int b = getNextTile(i, j)[1];
         if (a == blankRow && b == blankCol) {
-            a = getPrevTile(a, b)[0];
-            b = getPrevTile(a, b)[1];
+            a = getNextTile(a, b)[0];
+            b = getNextTile(a, b)[1];
         }
         board.exchangeTile(i, j, a, b);
         return board;
