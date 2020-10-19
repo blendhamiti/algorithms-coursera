@@ -43,13 +43,13 @@ public class Board {
         StringBuilder board = new StringBuilder(n + "\n");
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                board.append(" " + tiles[i][j]);
+                if (tiles[i][j] == 0) board.append(" " + " ");
+                else board.append(" " + tiles[i][j]);
             }
             board.append("\n");
         }
         board.append("hamming: " + this.hamming() + "\n");
         board.append("manhattan: " + this.manhattan() + "\n");
-
         return board.toString();
     }
 

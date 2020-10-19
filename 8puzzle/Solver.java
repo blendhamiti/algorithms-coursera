@@ -4,6 +4,7 @@
  *  Description: Solver
  **************************************************************************** */
 
+import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.Queue;
 
@@ -11,38 +12,65 @@ import java.util.Comparator;
 
 public class Solver {
     private Queue<Board> solution;
-    int moves;
+    private int moves;
 
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
         // TODO: immutable data type
         if (initial == null) throw new IllegalArgumentException();
-        solution = new Queue<>();
         moves = 0;
 
-        Node prevNode = null;
-        Node node = new Node(initial, moves, prevNode);
-        MinPQ<Node> pq = new MinPQ<>(new ManhattanPriority());
-        pq.insert(node);
+        solution = new Queue<>();
+        MinPQ<Node> pq = new MinPQ<>(new HammingPriority());
+        pq.insert(new Node(initial, moves, null));
 
+        // Queue<Board> twinSolution = new Queue<>();
+        // Node twinPrevNode = null;
+        // Node twinNode = new Node(initial.twin(), moves, twinPrevNode);
+        // MinPQ<Node> twinPq = new MinPQ<>(new HammingPriority());
+        // twinPq.insert(twinNode);
 
         int count = 0;
-        
+
+        Node min;
         while (!pq.min().board.isGoal()) {
+        // while (!pq.min().board.isGoal() && !twinPq.min().board.isGoal()) {
             moves++;
-            prevNode = node;
-            for (Board board : pq.min().board.neighbors()) {
-                node = new Node(board, moves, prevNode);
-                if (node.prevNode != null && !node.board.equals(node.prevNode.board))
-                    pq.insert(node);
+            min = pq.delMin();
+            Node temp;
+            for (Board board : min.board.neighbors()) {
+                temp = new Node(board, moves, min);
+                if (temp.prevNode != null
+                        && !temp.board.equals(temp.prevNode.board))
+                    pq.insert(temp);
             }
-            solution.enqueue(pq.delMin().board);
+            solution.enqueue(min.board);
+
+            // twinPrevNode = twinNode;
+            // for (Board board : twinPq.min().board.neighbors()) {
+            //     twinNode = new Node(board, moves, twinPrevNode);
+            //     if (twinNode.prevNode != null && !twinNode.board.equals(twinNode.prevNode.board))
+            //         twinPq.insert(twinNode);
+            // }
+            // twinSolution.enqueue(twinPq.delMin().board);
+
+
 
             count++;
-            if (count == 100) break;
+            if (count == 10) break;
         }
 
+        // if (twinPq.min().board.isGoal()) {
+        //     moves = -1;
+        //     solution = null;
+        //     return;
+        // }
+        // twinSolution.enqueue(twinPq.delMin().board);
+
         solution.enqueue(pq.delMin().board);
+
+
+
     }
 
     private class Node {
@@ -77,7 +105,7 @@ public class Solver {
 
     // is the initial board solvable? (see below)
     public boolean isSolvable() {
-        return (this.moves() >= 0);
+        return (this.solution() == null);
     }
 
     // min number of moves to solve initial board; -1 if unsolvable
@@ -94,7 +122,7 @@ public class Solver {
     public static void main(String[] args) {
 
         // moves = 5
-        int[][] tiles = {{1, 0, 3}, {5, 2, 6}, {4, 7, 8}};
+        // int[][] tiles = {{1, 0, 3}, {5, 2, 6}, {4, 7, 8}};
 
         // moves = 1
         // int[][] tiles = {{1, 2, 3}, {4, 5, 6}, {7, 0, 8}};
@@ -104,6 +132,14 @@ public class Solver {
 
         // unsolvable
         // int[][] tiles = {{1, 2, 3}, {4, 5, 6}, {8, 7, 0}};
+
+        // create initial board from file
+        In in = new In("puzzle07.txt");
+        int n = in.readInt();
+        int[][] tiles = new int[n][n];
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                tiles[i][j] = in.readInt();
 
         Board board = new Board(tiles);
         Solver solver = new Solver(board);
