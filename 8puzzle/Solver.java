@@ -4,73 +4,49 @@
  *  Description: Solver
  **************************************************************************** */
 
-import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
-import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.Stack;
 
 import java.util.Comparator;
 
 public class Solver {
-    private Queue<Board> solution;
-    private int moves;
+    private Stack<Board> solution;
 
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
         // TODO: immutable data type
         if (initial == null) throw new IllegalArgumentException();
-        moves = 0;
+        int moves = 0;
 
-        solution = new Queue<>();
-        MinPQ<Node> pq = new MinPQ<>(new HammingPriority());
+        solution = new Stack<>();
+        MinPQ<Node> pq = new MinPQ<>(new ManhattanPriority());
         pq.insert(new Node(initial, moves, null));
 
-        // Queue<Board> twinSolution = new Queue<>();
-        // Node twinPrevNode = null;
-        // Node twinNode = new Node(initial.twin(), moves, twinPrevNode);
-        // MinPQ<Node> twinPq = new MinPQ<>(new HammingPriority());
-        // twinPq.insert(twinNode);
-
-        int count = 0;
-
-        Node min;
         while (!pq.min().board.isGoal()) {
-        // while (!pq.min().board.isGoal() && !twinPq.min().board.isGoal()) {
             moves++;
-            min = pq.delMin();
             Node temp;
-            for (Board board : min.board.neighbors()) {
-                temp = new Node(board, moves, min);
+            for (Board board : pq.min().board.neighbors()) {
+                temp = new Node(board, moves, pq.min());
                 if (temp.prevNode != null
                         && !temp.board.equals(temp.prevNode.board))
                     pq.insert(temp);
             }
-            solution.enqueue(min.board);
+            pq.delMin();
 
-            // twinPrevNode = twinNode;
-            // for (Board board : twinPq.min().board.neighbors()) {
-            //     twinNode = new Node(board, moves, twinPrevNode);
-            //     if (twinNode.prevNode != null && !twinNode.board.equals(twinNode.prevNode.board))
-            //         twinPq.insert(twinNode);
-            // }
-            // twinSolution.enqueue(twinPq.delMin().board);
-
-
-
-            count++;
-            if (count == 10) break;
+            // to avoid infinite loops
+            if (moves == 1000) {
+                solution = null;
+                return;
+            }
         }
 
-        // if (twinPq.min().board.isGoal()) {
-        //     moves = -1;
-        //     solution = null;
-        //     return;
-        // }
-        // twinSolution.enqueue(twinPq.delMin().board);
-
-        solution.enqueue(pq.delMin().board);
-
-
-
+        // find trail from solved to initial board
+        solution.push(pq.min().board);
+        Node trail = pq.min();
+        while (trail.prevNode != null) {
+            trail = trail.prevNode;
+            solution.push(trail.board);
+        }
     }
 
     private class Node {
@@ -110,7 +86,7 @@ public class Solver {
 
     // min number of moves to solve initial board; -1 if unsolvable
     public int moves() {
-        return moves;
+        return solution.size() - 1;
     }
 
     // sequence of boards in a shortest solution; null if unsolvable
@@ -131,20 +107,20 @@ public class Solver {
         // int[][] tiles = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
 
         // unsolvable
-        // int[][] tiles = {{1, 2, 3}, {4, 5, 6}, {8, 7, 0}};
+        int[][] tiles = {{1, 2, 3}, {4, 5, 6}, {8, 7, 0}};
 
         // create initial board from file
-        In in = new In("puzzle07.txt");
-        int n = in.readInt();
-        int[][] tiles = new int[n][n];
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < n; j++)
-                tiles[i][j] = in.readInt();
+        // In in = new In("puzzle07.txt");
+        // int n = in.readInt();
+        // int[][] tiles = new int[n][n];
+        // for (int i = 0; i < n; i++)
+        //     for (int j = 0; j < n; j++)
+        //         tiles[i][j] = in.readInt();
 
         Board board = new Board(tiles);
-        Solver solver = new Solver(board);
+        Solver solver = new Solver(board.twin());
         System.out.println(solver.solution);
-        System.out.println("moves: " + solver.moves());
+        // System.out.println("moves: " + solver.moves());
 
         // // Example text client
         // // create initial board from file

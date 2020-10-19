@@ -48,8 +48,6 @@ public class Board {
             }
             board.append("\n");
         }
-        board.append("hamming: " + this.hamming() + "\n");
-        board.append("manhattan: " + this.manhattan() + "\n");
         return board.toString();
     }
 
