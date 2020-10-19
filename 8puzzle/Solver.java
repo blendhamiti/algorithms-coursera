@@ -22,19 +22,34 @@ public class Solver {
         MinPQ<Node> pq = new MinPQ<>(new ManhattanPriority());
         pq.insert(new Node(initial, moves, null));
 
+        // MinPQ<Node> twinPq = new MinPQ<>(new ManhattanPriority());
+        // pq.insert(new Node(initial.twin(), moves, null));
+
         while (!pq.min().board.isGoal()) {
             moves++;
             Node temp;
+            boolean isPresent;
+
             for (Board board : pq.min().board.neighbors()) {
                 temp = new Node(board, moves, pq.min());
-                if (temp.prevNode != null
-                        && !temp.board.equals(temp.prevNode.board))
-                    pq.insert(temp);
+                isPresent = false;
+
+                Node trail = temp;
+                while (trail.prevNode != null) {
+                    if (temp.board.equals(trail.prevNode.board)) {
+                        isPresent = true;
+                        break;
+                    }
+                    trail = trail.prevNode;
+                }
+
+                if (!isPresent) pq.insert(temp);
             }
+
             pq.delMin();
 
             // to avoid infinite loops
-            if (moves == 1000) {
+            if (moves == 200000) {
                 solution = null;
                 return;
             }
@@ -120,7 +135,7 @@ public class Solver {
         Board board = new Board(tiles);
         Solver solver = new Solver(board.twin());
         System.out.println(solver.solution);
-        // System.out.println("moves: " + solver.moves());
+        System.out.println("moves: " + solver.moves());
 
         // // Example text client
         // // create initial board from file
