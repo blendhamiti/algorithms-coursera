@@ -4,15 +4,14 @@
  *  Description: Board
  **************************************************************************** */
 
-import java.util.ArrayList;
-import java.util.List;
+import edu.princeton.cs.algs4.Bag;
 
 public class Board {
     private int[][] tiles;
     private final int n;
     private int blankRow;
     private int blankCol;
-    enum Direction {
+    private enum Direction {
         UP,
         DOWN,
         LEFT,
@@ -43,8 +42,8 @@ public class Board {
         StringBuilder board = new StringBuilder(n + "\n");
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                if (tiles[i][j] == 0) board.append(" " + " ");
-                else board.append(" " + tiles[i][j]);
+                if (tiles[i][j] < 10) board.append(" " + tiles[i][j] + " ");
+                else board.append(tiles[i][j] + " ");
             }
             board.append("\n");
         }
@@ -74,9 +73,9 @@ public class Board {
         int manhattan = 0;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                if (tiles[i][j] != 0 && tiles[i][j] != i * n + j + 1) {
-                    manhattan += Math.abs(i - tiles[i][j]/n)
-                            + Math.abs(j - (tiles[i][j] - 1)%n);
+                if (tiles[i][j] != 0) {
+                    manhattan += Math.abs(i - (tiles[i][j] - 1) / n)
+                            + Math.abs(j - (tiles[i][j] - 1) % n);
                 }
             }
         }
@@ -104,38 +103,39 @@ public class Board {
 
     // all neighboring boards
     public Iterable<Board> neighbors() {
-        // is arraylist necessary here?
-        List<Board> neighbors = new ArrayList<>();
+        Bag<Board> neighbors = new Bag<>();
         Board board;
         for (Direction dir : Direction.values()) {
             board = new Board(tiles);
-            board.moveBlank(dir);
-            if (!this.equals(board) && !neighbors.contains(board))
+            if (board.moveBlank(dir))
                 neighbors.add(board);
         }
         return neighbors;
     }
 
-    private void moveBlank(Direction dir) {
+    private boolean moveBlank(Direction dir) {
         if (dir == Direction.UP) {
-            exchangeBlank(blankRow - 1, blankCol);
+            return exchangeBlank(blankRow - 1, blankCol);
         }
         if (dir == Direction.DOWN) {
-            exchangeBlank(blankRow + 1, blankCol);
+            return exchangeBlank(blankRow + 1, blankCol);
         }
         if (dir == Direction.LEFT) {
-            exchangeBlank(blankRow, blankCol - 1);
+            return exchangeBlank(blankRow, blankCol - 1);
         }
         if (dir == Direction.RIGHT) {
-            exchangeBlank(blankRow, blankCol + 1);
+            return exchangeBlank(blankRow, blankCol + 1);
         }
+        return false;
     }
 
-    private void exchangeBlank(int row, int col) {
+    private boolean exchangeBlank(int row, int col) {
         if (tileExists(row, col)) {
             tiles[blankRow][blankCol] = tiles[row][col];
             tiles[row][col] = 0;
+            return true;
         }
+        return false;
     }
 
     private boolean tileExists(int row, int col) {
@@ -193,12 +193,16 @@ public class Board {
 
     // unit testing (not graded)
     public static void main(String[] args) {
-        int[][] tiles = {{0, 2, 8}, {4, 5, 6}, {7, 3, 1}};
+        // int[][] tiles = {{0, 2, 8}, {4, 5, 6}, {7, 3, 1}};
+        // int[][] tiles = {{5, 1, 8}, {2, 7, 3}, {4, 0, 6}};
+        int[][] tiles = {{1, 2, 3}, {4, 5, 7}, {6, 0, 8}};
         Board board = new Board(tiles);
         System.out.println(board);
         System.out.println("hamming: " + board.hamming());
         System.out.println("manhattan: " + board.manhattan());
-        System.out.println(board.neighbors());
+        for (Board b : board.neighbors()) {
+            System.out.println(b);
+        }
         System.out.println(board.twin());
     }
 }
