@@ -173,18 +173,6 @@ public class Board {
         return res;
     }
 
-    private int[] getPrevTile(int row, int col) {
-        int[] res = {row, col};
-        if (col > 0) {
-            res[1]--;
-        }
-        else {
-            res[0]--;
-            res[1] = n - 1;
-        }
-        return res;
-    }
-
     private void exchangeTile(int rowi, int coli, int rowj, int colj) {
         int oldVal = tiles[rowi][coli];
         tiles[rowi][coli] = tiles[rowj][colj];

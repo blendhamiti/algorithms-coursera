@@ -4,6 +4,7 @@
  *  Description: Solver
  **************************************************************************** */
 
+import edu.princeton.cs.algs4.Bag;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.Stack;
@@ -17,70 +18,35 @@ public class Solver {
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
         if (initial == null) throw new IllegalArgumentException();
+        solution = new Stack<>();
         int moves = 0;
 
-        solution = new Stack<>();
         MinPQ<Node> pq = new MinPQ<>(new ManhattanPriority());
         pq.insert(new Node(initial, moves, null));
 
         MinPQ<Node> twinPq = new MinPQ<>(new ManhattanPriority());
         twinPq.insert(new Node(initial.twin(), moves, null));
 
+        Bag<MinPQ<Node>> queues = new Bag<>();
+        queues.add(pq);
+        queues.add(twinPq);
+
+
         while (!pq.min().board.isGoal() && !twinPq.min().board.isGoal()) {
             moves++;
 
-
-            // process original board
-            Node min = pq.min();
-            Node temp;
-            boolean isPresent;
-
-            for (Board neighbor : min.board.neighbors()) {
-                temp = new Node(neighbor, moves, min);
-                isPresent = false;
-
-                if (temp.prevNode.prevNode != null) {
-                    for (Board neighborOfNeighbor
-                            : temp.prevNode.prevNode.board.neighbors()) {
-                        if (neighbor.equals(neighborOfNeighbor))
-                            isPresent = true;
-                    }
+            for (MinPQ<Node> queue : queues) {
+                for (Board neighbor : queue.min().board.neighbors()) {
+                    if (queue.min().prevNode != null && neighbor.equals(queue.min().prevNode.board))
+                        continue;
+                    else
+                        queue.insert(new Node(neighbor, moves, queue.min()));
                 }
-
-                if (!isPresent) pq.insert(temp);
+                queue.delMin();
             }
-            pq.delMin();
-
-
-            // process twin board
-            Node twinMin = twinPq.min();
-            Node twinTemp;
-            boolean twinIsPresent;
-
-            for (Board neighbor : twinMin.board.neighbors()) {
-                twinTemp = new Node(neighbor, moves, twinMin);
-                twinIsPresent = false;
-
-                if (twinTemp.prevNode.prevNode != null) {
-                    for (Board neighborOfNeighbor
-                            : twinTemp.prevNode.prevNode.board.neighbors()) {
-                        if (neighbor.equals(neighborOfNeighbor))
-                            twinIsPresent = true;
-                    }
-                }
-
-                if (!twinIsPresent) twinPq.insert(twinTemp);
-            }
-            twinPq.delMin();
-
-            // TODO delete
-            // to avoid infinite loops
-            // if (moves == 1000000) {
-            //     solution = null;
-            //     return;
-            // }
         }
 
+        // build up the solution
         // original board is solved
         if (pq.min().board.isGoal()) {
 
@@ -178,7 +144,7 @@ public class Solver {
 
         // Example text client
         // create initial board from file
-        In in = new In("puzzle07.txt");
+        In in = new In("puzzle14.txt");
         int n = in.readInt();
         int[][] tiles = new int[n][n];
         for (int i = 0; i < n; i++)
