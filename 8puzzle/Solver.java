@@ -19,13 +19,12 @@ public class Solver {
     public Solver(Board initial) {
         if (initial == null) throw new IllegalArgumentException();
         solution = new Stack<>();
-        int moves = 0;
 
         MinPQ<Node> pq = new MinPQ<>(new ManhattanPriority());
-        pq.insert(new Node(initial, moves, null));
+        pq.insert(new Node(initial, 0, null));
 
         MinPQ<Node> twinPq = new MinPQ<>(new ManhattanPriority());
-        twinPq.insert(new Node(initial.twin(), moves, null));
+        twinPq.insert(new Node(initial.twin(), 0, null));
 
         Bag<MinPQ<Node>> queues = new Bag<>();
         queues.add(pq);
@@ -33,14 +32,13 @@ public class Solver {
 
 
         while (!pq.min().board.isGoal() && !twinPq.min().board.isGoal()) {
-            moves++;
 
             for (MinPQ<Node> queue : queues) {
                 for (Board neighbor : queue.min().board.neighbors()) {
                     if (queue.min().prevNode != null && neighbor.equals(queue.min().prevNode.board))
                         continue;
                     else
-                        queue.insert(new Node(neighbor, moves, queue.min()));
+                        queue.insert(new Node(neighbor, queue.min().moves + 1, queue.min()));
                 }
                 queue.delMin();
             }
