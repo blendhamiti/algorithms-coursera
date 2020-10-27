@@ -10,8 +10,6 @@ import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.SET;
 import edu.princeton.cs.algs4.StdDraw;
 
-import java.util.Iterator;
-
 public class PointSET {
     private SET<Point2D> set;
 
@@ -42,25 +40,18 @@ public class PointSET {
 
     // draw all points to standard draw
     public void draw()  {
-        Point2D p;
-        Iterator<Point2D> it = set.iterator();
         StdDraw.setPenColor(StdDraw.BLACK);
         StdDraw.setPenRadius(0.01);
-        while (it.hasNext()) {
-            p = it.next();
+        for (Point2D p : set)
             StdDraw.point(p.x(), p.y());
-        }
     }
 
     // all points that are inside the rectangle (or on the boundary)
     public Iterable<Point2D> range(RectHV rect) {
-        Point2D current;
         SET<Point2D> onRect = new SET<>();
-        Iterator<Point2D> it = set.iterator();
-        while (it.hasNext()) {
-            current = it.next();
+        for (Point2D current : set) {
             if (current.x() >= rect.xmin() && current.y() >= rect.ymin()
-            && current.x() <= rect.xmax() && current.y() <= rect.ymax())
+                    && current.x() <= rect.xmax() && current.y() <= rect.ymax())
                 onRect.add(current);
         }
         return onRect;
@@ -70,13 +61,10 @@ public class PointSET {
     public Point2D nearest(Point2D p) {
         if (isEmpty()) return null;
         Point2D nearest = null;
-        Point2D current;
-        Iterator<Point2D> it = set.iterator();
-        while (it.hasNext()) {
-            current = it.next();
+        for (Point2D current : set) {
             if (nearest == null)
                 nearest = current;
-            if (p.distanceTo(current) < p.distanceTo(nearest))
+            if (p.distanceSquaredTo(current) < p.distanceSquaredTo(nearest))
                 nearest = current;
         }
         return nearest;
@@ -90,7 +78,7 @@ public class PointSET {
             pointSET.insert(new Point2D(in.readDouble(), in.readDouble()));
 
         // Test draw()
-        // pointSET.draw();
+        pointSET.draw();
 
         // Test range()
         // Point2D min = new Point2D(0.2, 0.2);
