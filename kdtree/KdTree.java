@@ -7,7 +7,6 @@
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
-import edu.princeton.cs.algs4.SET;
 import edu.princeton.cs.algs4.StdDraw;
 
 public class KdTree {
@@ -107,26 +106,28 @@ public class KdTree {
         StdDraw.setPenRadius(0.005);
         StdDraw.line(root.p.x(), 0, root.p.x(), 1);
 
-        Node current = root;
-        while (current != null) {
-            drawSubtree(current);
-        }
-
-
-        if (node.isVertical()) {
-            StdDraw.setPenColor(StdDraw.RED);
-            StdDraw.setPenRadius(0.005);
-            StdDraw.line(node.getPoint().x(), 0, node.getPoint().x(), 1);
-        }
-        else {
-            StdDraw.setPenColor(StdDraw.BLUE);
-            StdDraw.setPenRadius(0.005);
-            StdDraw.line(0, node.getPoint().y(), 1, node.getPoint().y());
-        }
+        drawSubtrees(root);
     }
 
-    private void drawSubtree(Node parent) {
-
+    private void drawSubtrees(Node parent) {
+        if (parent.left != null) {
+            drawSubtrees(parent.left);
+            StdDraw.setPenColor(StdDraw.BLACK);
+            StdDraw.setPenRadius(0.01);
+            parent.left.p.draw();
+            StdDraw.setPenColor(StdDraw.RED);
+            StdDraw.setPenRadius(0.005);
+            StdDraw.line(parent.left.p.x(), 0, parent.left.p.x(), 1);
+        }
+        if (parent.right != null) {
+            drawSubtrees(parent.right);
+            StdDraw.setPenColor(StdDraw.BLACK);
+            StdDraw.setPenRadius(0.01);
+            parent.right.p.draw();
+            StdDraw.setPenColor(StdDraw.BLUE);
+            StdDraw.setPenRadius(0.005);
+            StdDraw.line(0, parent.right.p.y(), 1, parent.right.p.y());
+        }
     }
 
     // all points that are inside the rectangle (or on the boundary)
