@@ -18,7 +18,7 @@ public class KdTree {
         root = null;
     }
 
-    private class Node implements Comparable<Node> {
+    private static class Node implements Comparable<Node> {
         public static final boolean VERTICAL = false;
         public static final boolean HORIZONTAL = true;
         public Node parent;
@@ -193,18 +193,20 @@ public class KdTree {
     public Point2D nearest(Point2D p) {
         if (p == null) throw new IllegalArgumentException();
         if (isEmpty()) return null;
-        // java cannot pass by reference, fix as below ?!
+        // warp point in node object to pass by reference
         Node closestNeighbor = new Node(root.p);
         searchSubtreeForCN(root, p, closestNeighbor);
         return closestNeighbor.p;
     }
 
     private void searchSubtreeForCN(Node node, Point2D p, Node closestNeighbor) {
-        if (node.left != null && rectangleOf(node.left).distanceTo(p) <= node.p.distanceTo(p))
+        if (node.left != null && rectangleOf(node.left).distanceSquaredTo(p) < node.p.distanceSquaredTo(p))
             searchSubtreeForCN(node.left, p, closestNeighbor);
-        if (node.right != null && rectangleOf(node.right).distanceTo(p) <= node.p.distanceTo(p))
+        if (node.right != null && rectangleOf(node.right).distanceSquaredTo(p) < node.p.distanceSquaredTo(p))
             searchSubtreeForCN(node.right, p, closestNeighbor);
-        if (node.p.distanceTo(p) < closestNeighbor.p.distanceTo(p)) closestNeighbor.p = node.p;
+
+        if (node.p.distanceSquaredTo(p) < closestNeighbor.p.distanceSquaredTo(p))
+            closestNeighbor.p = node.p;
     }
 
     // unit testing of the methods (optional)
