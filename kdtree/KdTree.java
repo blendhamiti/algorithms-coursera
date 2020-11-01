@@ -166,6 +166,7 @@ public class KdTree {
 
     // all points that are inside the rectangle (or on the boundary)
     public Iterable<Point2D> range(RectHV rect) {
+        if (rect == null) throw new IllegalArgumentException();
         SET<Point2D> onRect = new SET<>();
         if (isEmpty()) return onRect;
         searchSubtreeForRange(root, rect, onRect);
@@ -173,12 +174,10 @@ public class KdTree {
     }
 
     private void searchSubtreeForRange(Node node, RectHV rect, SET<Point2D> set) {
-        if (node.left != null && rectangleOf(node.left).intersects(rect)) {
+        if (node.left != null && rectangleOf(node.left).intersects(rect))
             searchSubtreeForRange(node.left, rect, set);
-        }
-        if (node.right != null && rectangleOf(node.right).intersects(rect)) {
+        if (node.right != null && rectangleOf(node.right).intersects(rect))
             searchSubtreeForRange(node.right, rect, set);
-        }
         if (rect.contains(node.p)) set.add(node.p);
     }
 
@@ -192,9 +191,10 @@ public class KdTree {
 
     // a nearest neighbor in the tree to point p; null if the tree is empty
     public Point2D nearest(Point2D p) {
+        if (p == null) throw new IllegalArgumentException();
         if (isEmpty()) return null;
-        // java cannot pass by reference, fix below
-        Node closestNeighbor = new Node(p);
+        // java cannot pass by reference, fix as below ?!
+        Node closestNeighbor = new Node(root.p);
         searchSubtreeForCN(root, p, closestNeighbor);
         return closestNeighbor.p;
     }
