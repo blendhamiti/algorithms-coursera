@@ -10,6 +10,8 @@ import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.StdDraw;
 
 public class KdTree {
+    private static final boolean LEFT = false;
+    private static final boolean RIGHT = true;
     private Node root;
 
     // construct an empty set of points
@@ -72,12 +74,23 @@ public class KdTree {
         Node current = root;
         while (newNode.p.compareTo(current.p) != 0) {
             current.size++;
-            if (newNode.compareTo(current) < 0) current = current.left;
-            current = current.right;
-            if (current == null) {
-                current = newNode;
+            if (newNode.compareTo(current) < 0) {
+                if (current.left != null) {
+                    current = current.left;
+                    continue;
+                }
+                current.left = newNode;
                 return;
             }
+            else {
+                if (current.right != null) {
+                    current = current.right;
+                    continue;
+                }
+                current.right = newNode;
+                return;
+            }
+
         }
     }
 
@@ -97,36 +110,57 @@ public class KdTree {
     // draw all points to standard draw
     public void draw()  {
         if (isEmpty()) return;
-
-        // draw root node point & line
-        StdDraw.setPenColor(StdDraw.BLACK);
-        StdDraw.setPenRadius(0.01);
-        root.p.draw();
-        StdDraw.setPenColor(StdDraw.RED);
-        StdDraw.setPenRadius(0.005);
-        StdDraw.line(root.p.x(), 0, root.p.x(), 1);
-
-        drawSubtrees(root);
+        drawSubtrees(null, root);
     }
 
-    private void drawSubtrees(Node parent) {
-        if (parent.left != null) {
-            drawSubtrees(parent.left);
-            StdDraw.setPenColor(StdDraw.BLACK);
-            StdDraw.setPenRadius(0.01);
-            parent.left.p.draw();
+    private void drawSubtrees(Node parent, Node child) {
+        if (child.left != null) drawSubtrees(child, child.left);
+        if (child.right != null) drawSubtrees(child, child.right);
+        drawNode(parent, child);
+    }
+
+    private void drawNode(Node parent, Node child) {
+        drawLine(parent, child);
+        drawPoint(child);
+    }
+
+    private void drawPoint(Node node) {
+        StdDraw.setPenColor(StdDraw.BLACK);
+        StdDraw.setPenRadius(0.015);
+        node.p.draw();
+    }
+
+    private void drawLine(Node parent, Node child) {
+        StdDraw.setPenRadius(0.005);
+
+        // draw root node
+        if (parent == null) {
             StdDraw.setPenColor(StdDraw.RED);
-            StdDraw.setPenRadius(0.005);
-            StdDraw.line(parent.left.p.x(), 0, parent.left.p.x(), 1);
+            StdDraw.line(child.p.x(), 0, child.p.x(), 1);
         }
-        if (parent.right != null) {
-            drawSubtrees(parent.right);
-            StdDraw.setPenColor(StdDraw.BLACK);
-            StdDraw.setPenRadius(0.01);
-            parent.right.p.draw();
-            StdDraw.setPenColor(StdDraw.BLUE);
-            StdDraw.setPenRadius(0.005);
-            StdDraw.line(0, parent.right.p.y(), 1, parent.right.p.y());
+
+        // draw left child
+        else if (child == parent.left) {
+            if (child.isVertical()) {
+                StdDraw.setPenColor(StdDraw.RED);
+                StdDraw.line(child.p.x(), 0, child.p.x(), parent.p.y());
+            }
+            else {
+                StdDraw.setPenColor(StdDraw.BLUE);
+                StdDraw.line(0, child.p.y(), parent.p.x(), child.p.y());
+            }
+        }
+
+        // draw right child
+        else {
+            if (child.isVertical()) {
+                StdDraw.setPenColor(StdDraw.RED);
+                StdDraw.line(child.p.x(), parent.p.y(), child.p.x(), 1);
+            }
+            else {
+                StdDraw.setPenColor(StdDraw.BLUE);
+                StdDraw.line(parent.p.x(), child.p.y(), 1, child.p.y());
+            }
         }
     }
 
@@ -144,12 +178,12 @@ public class KdTree {
 
     // unit testing of the methods (optional)
     public static void main(String[] args) {
-        In in = new In("input4b.txt");
+        In in = new In("input5b.txt");
         KdTree kdTree = new KdTree();
         while (!in.isEmpty())
             kdTree.insert(new Point2D(in.readDouble(), in.readDouble()));
 
         // Test draw()
-        // kdTree.draw();
+        kdTree.draw();
     }
 }
