@@ -21,6 +21,7 @@ public class NearestNeighborVisualizer {
 
         // initialize the two data structures with point from file
         String filename = args[0];
+        // String filename = "circle100.txt";
         In in = new In(filename);
         PointSET brute = new PointSET();
         KdTree kdtree = new KdTree();

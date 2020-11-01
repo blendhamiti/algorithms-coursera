@@ -49,11 +49,9 @@ public class PointSET {
     // all points that are inside the rectangle (or on the boundary)
     public Iterable<Point2D> range(RectHV rect) {
         SET<Point2D> onRect = new SET<>();
-        for (Point2D current : set) {
-            if (current.x() >= rect.xmin() && current.y() >= rect.ymin()
-                    && current.x() <= rect.xmax() && current.y() <= rect.ymax())
+        for (Point2D current : set)
+            if (rect.contains(current))
                 onRect.add(current);
-        }
         return onRect;
     }
 

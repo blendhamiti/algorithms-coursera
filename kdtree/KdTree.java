@@ -7,6 +7,7 @@
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
+import edu.princeton.cs.algs4.SET;
 import edu.princeton.cs.algs4.StdDraw;
 
 public class KdTree {
@@ -70,7 +71,6 @@ public class KdTree {
         if (root == null) root = newNode;
         Node current = root;
         while (newNode.p.compareTo(current.p) != 0) {
-            current.size++;
             if (newNode.compareTo(current) < 0) {
                 if (current.left == null) {
                     newNode.parent = current;
@@ -78,6 +78,14 @@ public class KdTree {
                     newNode.leftLimit = newNode.parent.parent == null ? 0 : newNode.parent.parent.leftLimit;
                     newNode.rightLimit = newNode.parent.isVertical() ? newNode.parent.p.x() : newNode.parent.p.y();
                     current.left = newNode;
+
+                    // increase all previous node sizes
+                    Node parent = current;
+                    parent.size++;
+                    while (parent.parent != null) {
+                        parent = parent.parent;
+                        parent.size++;
+                    }
                 }
                 current = current.left;
             }
@@ -88,6 +96,14 @@ public class KdTree {
                     newNode.leftLimit = newNode.parent.isVertical() ? newNode.parent.p.x() : newNode.parent.p.y();
                     newNode.rightLimit = newNode.parent.parent == null ? 1 : newNode.parent.parent.rightLimit;
                     current.right = newNode;
+
+                    // increase all previous node sizes
+                    Node parent = current;
+                    parent.size++;
+                    while (parent.parent != null) {
+                        parent = parent.parent;
+                        parent.size++;
+                    }
                 }
                 current = current.right;
             }
@@ -150,24 +166,58 @@ public class KdTree {
 
     // all points that are inside the rectangle (or on the boundary)
     public Iterable<Point2D> range(RectHV rect) {
-        // TODO
-        return null;
+        SET<Point2D> onRect = new SET<>();
+        if (isEmpty()) return onRect;
+        searchSubtreeForRange(root, rect, onRect);
+        return onRect;
+    }
+
+    private void searchSubtreeForRange(Node node, RectHV rect, SET<Point2D> set) {
+        if (node.left != null && rectangleOf(node.left).intersects(rect)) {
+            searchSubtreeForRange(node.left, rect, set);
+        }
+        if (node.right != null && rectangleOf(node.right).intersects(rect)) {
+            searchSubtreeForRange(node.right, rect, set);
+        }
+        if (rect.contains(node.p)) set.add(node.p);
+    }
+
+    private RectHV rectangleOf(Node node) {
+        if (node == root) return new RectHV(0, 0, 1, 1);
+        if (node.isVertical())
+            return new RectHV(node.parent.leftLimit, node.leftLimit, node.parent.rightLimit, node.rightLimit);
+        else
+            return new RectHV(node.leftLimit, node.parent.leftLimit, node.rightLimit, node.parent.rightLimit);
     }
 
     // a nearest neighbor in the tree to point p; null if the tree is empty
     public Point2D nearest(Point2D p) {
-        // TODO
-        return null;
+        if (isEmpty()) return null;
+        // java cannot pass by reference, fix below
+        Node closestNeighbor = new Node(p);
+        searchSubtreeForCN(root, p, closestNeighbor);
+        return closestNeighbor.p;
+    }
+
+    private void searchSubtreeForCN(Node node, Point2D p, Node closestNeighbor) {
+        if (node.left != null && rectangleOf(node.left).distanceTo(p) <= node.p.distanceTo(p))
+            searchSubtreeForCN(node.left, p, closestNeighbor);
+        if (node.right != null && rectangleOf(node.right).distanceTo(p) <= node.p.distanceTo(p))
+            searchSubtreeForCN(node.right, p, closestNeighbor);
+        if (node.p.distanceTo(p) < closestNeighbor.p.distanceTo(p)) closestNeighbor.p = node.p;
     }
 
     // unit testing of the methods (optional)
     public static void main(String[] args) {
-        In in = new In("input10.txt");
+        In in = new In("input4b.txt");
         KdTree kdTree = new KdTree();
         while (!in.isEmpty())
             kdTree.insert(new Point2D(in.readDouble(), in.readDouble()));
 
         // Test draw()
         kdTree.draw();
+
+        // Closest neighbor test
+        // kdTree.nearest(new Point2D(0.1, 0.1));
     }
 }
